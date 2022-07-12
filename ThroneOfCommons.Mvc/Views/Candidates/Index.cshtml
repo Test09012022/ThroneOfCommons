@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ThroneOfCommons.Mvc.Models.CandidateViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">List of Candidates</h1>
+</div>
+
+@if (Model.Any())
+{
+    @*<p>Filter by Candidate Type</p>
+    <div class="row">
+        <div class="col-md-4">
+            <form id="filterForm" asp-action="index" method="get">
+                <div class="control-group">
+                    <label asp-for="@Model.First().PartyType" class="control-label"></label>
+                    @Html.DropDownList("AllPetTypes", @Model.First().PartyType, "Select-Type", new { @class = "form-control" })
+                    <input type="submit" value="Find" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>*@
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.ActionLink("Name", "Index", new { sortOrder = "Name" })
+             
+            <th>
+                @Html.ActionLink("Rating", "Index", new { sortOrder = "Rating" })
+            </th>
+            <th>
+                @Html.ActionLink("BiddedOn", "Index", new { sortOrder = "BiddedOn" })
+            </th>
+            <th>
+                @Html.ActionLink("LatestPortfolio", "Index", new { sortOrder = "LatestPortfolio" })
+            </th>
+
+        </tr>
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rating)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BiddedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LatestPortfolio)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+        </td>
+
+    </tr>
+        }
+
+    </table>
+}
+else
+{
+    <h1 class="text-center">No Candidates. You give it a try.</h1>}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
