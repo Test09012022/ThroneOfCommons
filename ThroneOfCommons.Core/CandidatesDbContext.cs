@@ -10,7 +10,7 @@ namespace ThroneOfCommons.Core
     {
         public DbSet<Candidate> Candidates { get; set; }
         private PasswordHasher<ApplicationUser> _passwordHasher { get; set; }
-        private readonly CandidatesDbContext _candidatesDbContext;
+       // private readonly CandidatesDbContext _candidatesDbContext;
 
         public CandidatesDbContext(
             DbContextOptions<CandidatesDbContext> options) : base(options)

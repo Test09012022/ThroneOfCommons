@@ -22,6 +22,7 @@ namespace ThroneOfCommons.Mvc.Models
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [Display(Name ="Bidded On")]
         public DateTime BiddedOn
         {
             get

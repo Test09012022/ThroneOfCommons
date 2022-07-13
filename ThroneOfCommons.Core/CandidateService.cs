@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ThroneOfCommons.Core
 {
-    public class CandidateService: ICandidateService
+    public class CandidateService : ICandidateService
     {
 
         private readonly CandidatesDbContext _candidatesDbContext;
@@ -13,19 +13,17 @@ namespace ThroneOfCommons.Core
         public CandidateService(CandidatesDbContext candidatesDbContext)
         {
             _candidatesDbContext = candidatesDbContext;
-         }
+        }
 
-
-
-     
         public List<Candidate> GetAll()
         {
-            
-            var connection = new SqliteConnection(_candidatesDbContext.Database.GetConnectionString());
-            connection.Open();
-            var qResult = new SqliteCommand("SELECT COUNT(*) FROM Candidates", connection).ExecuteScalar();
 
+            var connection = new SqliteConnection(_candidatesDbContext.Database.GetConnectionString());
             var candidatesList = new List<Candidate>();
+            try
+            {
+                connection.Open();
+            var qResult = new SqliteCommand("SELECT COUNT(*) FROM Candidates", connection).ExecuteScalar();
             for (var i = 0; i < (long)qResult; i++)
             {
                 var z = _candidatesDbContext.Candidates.FindAsync(i + 1).Result;
@@ -33,36 +31,44 @@ namespace ThroneOfCommons.Core
             }
             connection.Close();
             return candidatesList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return candidatesList;
+              
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
-        public bool Add( Candidate candidate)
+        public bool Add(Candidate candidate)
         {
-            try { 
-
             var connection = new SqliteConnection(_candidatesDbContext.Database.GetConnectionString());
-            connection.Open();
-            var qResult = new SqliteCommand("SELECT COUNT(Id) FROM Candidates", connection).ExecuteScalar();
-                connection.Close();
-            candidate.Id = Convert.ToInt32(qResult) + 1;
-            _candidatesDbContext.Candidates.Add(candidate);
-            _candidatesDbContext.SaveChanges();
+            try
+            {
+                connection.Open();
+                var qResult = new SqliteCommand("SELECT COUNT(Id) FROM Candidates", connection).ExecuteScalar();
+                candidate.Id = Convert.ToInt32(qResult) + 1;
+                _candidatesDbContext.Candidates.Add(candidate);
+                _candidatesDbContext.SaveChanges();
                 //return candidate;
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return false;
             }
             finally
             {
-
-            
-
-            }
+                connection.Close();
+           }
         }
 
-        public bool Update( Candidate candidate)
+        public bool Update(Candidate candidate)
         {
             _candidatesDbContext.Candidates.Update(candidate);
             return _candidatesDbContext.SaveChanges() == 1;
@@ -75,9 +81,10 @@ namespace ThroneOfCommons.Core
 
             var result = false;
             var candidate = _candidatesDbContext.Candidates.Find(id);
-            if(candidate != null){ 
-            _candidatesDbContext.Candidates.Remove(candidate);
-            _candidatesDbContext.SaveChanges();
+            if (candidate != null)
+            {
+                _candidatesDbContext.Candidates.Remove(candidate);
+                _candidatesDbContext.SaveChanges();
                 result = true;
             }
             return result;

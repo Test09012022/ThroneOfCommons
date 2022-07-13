@@ -27,75 +27,82 @@ namespace ThroneOfCommons.Mvc.Controllers
 
         public IActionResult Index(string sortOrder = "Name")
         {
-       
-            var result = service.GetAll();
-            var viewModel = from r in result
-                            select new CandidateViewModel
-                            {
-                                Name = r.Name,
-                                Id=r.Id,
-                                Rating = r.Rating,
-                                LatestPortfolio = r.LatestPortfolio,
-                                BiddedOn = r.BiddedOn
 
-                            };
-
-            switch (sortOrder)
+            try
             {
+                var result = service.GetAll();
+                var viewModel = from r in result
+                                select new CandidateViewModel
+                                {
+                                    Name = r.Name,
+                                    Id = r.Id,
+                                    Rating = r.Rating,
+                                    LatestPortfolio = r.LatestPortfolio,
+                                    BiddedOn = r.BiddedOn
 
-                case  "Name":
-                    if(existingSort== sortOrder&& desc)
-                    {
-                        viewModel = viewModel.OrderByDescending(r => r.Name);
-                    }
-                    else { 
-                    viewModel = viewModel.OrderBy(r => r.Name);
-                        desc = true;
-                    }
-                    
+                                };
 
-                    break;
-                case "LatestPortfolio":
-                    if (existingSort == sortOrder && desc)
-                    {
-                        viewModel = viewModel.OrderByDescending(r => r.LatestPortfolio);
-                        desc = false;
-                    }
-                    else
-                    {
-                        viewModel = viewModel.OrderBy(r => r.LatestPortfolio);
-                        desc = true;
-                    }
-                    break;
-                case "Rating":
-                    if (existingSort == sortOrder && desc)
-                    {
-                        viewModel = viewModel.OrderByDescending(r => r.Rating);
-                        desc = false;
-                    }
-                    else
-                    {
-                        viewModel = viewModel.OrderBy(r => r.Rating);
-                        desc = true;
-                    }
-                    break;
-                case "BiddedOn":
-                    if (existingSort == sortOrder && desc)
-                    {
-                        viewModel = viewModel.OrderByDescending(r => r.BiddedOn);
-                        desc = false;
-                    }
-                    else
-                    {
-                        viewModel = viewModel.OrderBy(r => r.BiddedOn);
-                        desc = true;
-                    }
-                    break;
+                switch (sortOrder)
+                {
+
+                    case "Name":
+                        if (existingSort == sortOrder && desc)
+                        {
+                            viewModel = viewModel.OrderByDescending(r => r.Name);
+                        }
+                        else
+                        {
+                            viewModel = viewModel.OrderBy(r => r.Name);
+                            desc = true;
+                        }
+
+
+                        break;
+                    case "LatestPortfolio":
+                        if (existingSort == sortOrder && desc)
+                        {
+                            viewModel = viewModel.OrderByDescending(r => r.LatestPortfolio);
+                            desc = false;
+                        }
+                        else
+                        {
+                            viewModel = viewModel.OrderBy(r => r.LatestPortfolio);
+                            desc = true;
+                        }
+                        break;
+                    case "Rating":
+                        if (existingSort == sortOrder && desc)
+                        {
+                            viewModel = viewModel.OrderByDescending(r => r.Rating);
+                            desc = false;
+                        }
+                        else
+                        {
+                            viewModel = viewModel.OrderBy(r => r.Rating);
+                            desc = true;
+                        }
+                        break;
+                    case "BiddedOn":
+                        if (existingSort == sortOrder && desc)
+                        {
+                            viewModel = viewModel.OrderByDescending(r => r.BiddedOn);
+                            desc = false;
+                        }
+                        else
+                        {
+                            viewModel = viewModel.OrderBy(r => r.BiddedOn);
+                            desc = true;
+                        }
+                        break;
+                }
+                existingSort = sortOrder;
+
+                return View(viewModel);
             }
-            existingSort = sortOrder;
-        
-
-            return View(viewModel);
+            catch
+            {
+                return View("Error", new ErrorViewModel { Error = "Unable to Load Candidates" });
+            }
         }
 
         [HttpGet]
@@ -110,17 +117,15 @@ namespace ThroneOfCommons.Mvc.Controllers
         public async Task<IActionResult> Create(CandidateCreateViewModel candidateCreateViewModel)
         {
 
-            try { 
+            try
+            {
+                if (ModelState.IsValid)
+                {
 
-     
-
-                //if (ModelState.IsValid)
-                //{
-
-                var result=   service.Add(new Candidate() { Name = candidateCreateViewModel.Name, BiddedOn = candidateCreateViewModel.BiddedOn, DateOfBirth= candidateCreateViewModel.DateOfBirth,PartyType= candidateCreateViewModel.Party,LatestPortfolio= candidateCreateViewModel.LatestPortfolio, Rating=candidateCreateViewModel.Rating });
-                if(result)
-                { 
-                return View("Details", new CandidateViewModel() {Name= candidateCreateViewModel.Name ,Rating= candidateCreateViewModel.Rating,LatestPortfolio= candidateCreateViewModel.LatestPortfolio,BiddedOn= candidateCreateViewModel .BiddedOn});
+                    var result = service.Add(new Candidate() { Name = candidateCreateViewModel.Name, BiddedOn = candidateCreateViewModel.BiddedOn, DateOfBirth = candidateCreateViewModel.DateOfBirth, PartyType = candidateCreateViewModel.Party, LatestPortfolio = candidateCreateViewModel.LatestPortfolio, Rating = candidateCreateViewModel.Rating });
+                if (result)
+                {
+                    return View("Details", new CandidateViewModel() { Name = candidateCreateViewModel.Name, Rating = candidateCreateViewModel.Rating, LatestPortfolio = candidateCreateViewModel.LatestPortfolio, BiddedOn = candidateCreateViewModel.BiddedOn });
                 }
                 else
                 {
@@ -128,24 +133,21 @@ namespace ThroneOfCommons.Mvc.Controllers
 
                 }
 
-                //}
-                //else { return View("Error", new ErrorViewModel { Error = "Unable to Add Candidate" }); }
+                }
+                else { return View("Error", new ErrorViewModel { Error = "Unable to Add Candidate" }); }
 
             }
-            catch (Exception e) 
+            catch 
             {
-
-                return View("Error", new ErrorViewModel { Error = "Unable to Add Candidate" });
+                 return View("Error", new ErrorViewModel { Error = "Unable to Add Candidate" });
             }
-
-
         }
 
         [HttpGet]
-     //   [Authorize]
+        //   [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-       
+            try { 
             var result = service.GetAll().Where(r => r.Id.Equals(id)).Select(r => new CandidateViewModel
             {
                 Name = r.Name,
@@ -156,46 +158,58 @@ namespace ThroneOfCommons.Mvc.Controllers
 
             }).FirstOrDefault();
             return View("Edit", result);
+            }
+            catch 
+            {
+                return View("Error", new ErrorViewModel { Error = "Unable to Load Required Candidate" });
+            }
         }
 
-     
+
         //    [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(int id, CandidateViewModel candidateViewModel)
         {
-            try { 
-                //if (ModelState.IsValid)
-                //{
+            try
+            {
+                if (ModelState.IsValid)
+                {
 
-                    var result = service.Update(new Candidate() { Name = candidateViewModel.Name, BiddedOn = candidateViewModel.BiddedOn, Id = id, Rating=candidateViewModel.Rating,LatestPortfolio=candidateViewModel.LatestPortfolio });
+                    var result = service.Update(new Candidate() { Name = candidateViewModel.Name, BiddedOn = candidateViewModel.BiddedOn, Id = id, Rating = candidateViewModel.Rating, LatestPortfolio = candidateViewModel.LatestPortfolio });
                     if (result)
                     {
                         return View("Details", candidateViewModel);
                     }
-                //}
+                }
                 return View("Edit", candidateViewModel);
             }
-            catch(Exception e)
+            catch 
             {
-                 return View("Error", new ErrorViewModel { Error = "Unable to Edit Candidate" });
-
+                return View("Error", new ErrorViewModel { Error = "Unable to Edit Candidate" });
             }
         }
-     
+
         [HttpGet]
         public ActionResult Delete(int id)
         {
+            try { 
             var result = service.GetAll().Where(r => r.Id.Equals(id)).Select(r => new CandidateViewModel
             {
                 Name = r.Name,
                 Id = r.Id,
                 Rating = r.Rating,
                 LatestPortfolio = r.LatestPortfolio,
-            
+
                 BiddedOn = r.BiddedOn
 
             }).FirstOrDefault();
             return View("Delete", result);
+            }
+            catch
+            {
+                return View("Error", new ErrorViewModel { Error = "Unable to Load Candidate" });
+            }
+
         }
 
 
@@ -205,14 +219,15 @@ namespace ThroneOfCommons.Mvc.Controllers
         {
             try
             {
-                var result=service.Delete(id);
-                
-                    return RedirectToAction("Index");
-                
+                if( service.Delete(id))
+                { 
+                return RedirectToAction("Index");
+                }
+                else { return View("Error", new ErrorViewModel { Error = "Unable to Delete Candidate" }); }
             }
             catch
             {
-                return View("Error", new ErrorViewModel { Error = "Unable to Edit Candidate" });
+                return View("Error", new ErrorViewModel { Error = "Unable to Delete Candidate" });
             }
         }
 
