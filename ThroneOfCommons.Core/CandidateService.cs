@@ -27,8 +27,10 @@ namespace ThroneOfCommons.Core
             for (var i = 0; i < (long)qResult; i++)
             {
                 var z = _candidatesDbContext.Candidates.FindAsync(i + 1).Result;
+                    if (z != null) { 
                 candidatesList.Add(z);
-            }
+                    }
+                }
             connection.Close();
             return candidatesList;
             }
@@ -50,7 +52,7 @@ namespace ThroneOfCommons.Core
             try
             {
                 connection.Open();
-                var qResult = new SqliteCommand("SELECT COUNT(Id) FROM Candidates", connection).ExecuteScalar();
+                var qResult = new SqliteCommand("SELECT MAX(Id) FROM Candidates", connection).ExecuteScalar();
                 candidate.Id = Convert.ToInt32(qResult) + 1;
                 _candidatesDbContext.Candidates.Add(candidate);
                 _candidatesDbContext.SaveChanges();
