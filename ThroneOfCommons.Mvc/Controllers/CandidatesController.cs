@@ -145,7 +145,7 @@ namespace ThroneOfCommons.Mvc.Controllers
 
         [HttpGet]
         //   [Authorize]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Details(int id)
         {
             try { 
             var result = service.GetAll().Where(r => r.Id.Equals(id)).Select(r => new CandidateViewModel
@@ -157,13 +157,18 @@ namespace ThroneOfCommons.Mvc.Controllers
                 BiddedOn = r.BiddedOn
 
             }).FirstOrDefault();
-            return View("Edit", result);
+            return View("Details", result);
             }
             catch 
             {
                 return View("Error", new ErrorViewModel { Error = "Unable to Load Required Candidate" });
             }
         }
+
+
+
+
+
 
 
         //    [Authorize]

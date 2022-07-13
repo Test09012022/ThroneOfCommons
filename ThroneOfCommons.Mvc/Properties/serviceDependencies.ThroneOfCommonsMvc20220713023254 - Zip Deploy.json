@@ -1,10 +1,10 @@
 {
   "dependencies": {
     "storage1": {
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/throneofcommonsmvcstorag",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/throneofcommonsmvcstorag",
       "type": "storage.azure",
       "connectionId": "Kestrel:Certificates:Development:Password",
-      "secretStore": "AzureAppSettings"
+      "secretStore": null
     }
   }
 }
