@@ -166,7 +166,28 @@ namespace ThroneOfCommons.Mvc.Controllers
         }
 
 
+        [HttpGet]
+        //   [Authorize]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                var result = service.GetAll().Where(r => r.Id.Equals(id)).Select(r => new CandidateViewModel
+                {
+                    Name = r.Name,
+                    Id = r.Id,
+                    Rating = r.Rating,
+                    LatestPortfolio = r.LatestPortfolio,
+                    BiddedOn = r.BiddedOn
 
+                }).FirstOrDefault();
+                return View("Edit", result);
+            }
+            catch
+            {
+                return View("Error", new ErrorViewModel { Error = "Unable to Load Required Candidate" });
+            }
+        }
 
 
 
